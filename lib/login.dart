@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:login/signup.dart';
-
 class Login extends StatefulWidget {
   
   @override
@@ -74,6 +72,8 @@ class _LoginState extends State<Login> {
       contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
       enabledBorder: const OutlineInputBorder(
         borderSide: const BorderSide(color: Color(0xFF606687), width: 2.0),
+        // borderRadius: const BorderRadius.circular(5.0)
+        // borderRadius: BorderRadius.circular(10.0)
       ),
       // border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
     ),
@@ -92,6 +92,7 @@ class _LoginState extends State<Login> {
       child: Text('Log In', style: TextStyle(color: Colors.white)),
     ),
   );
+
 
   Widget ctext(){
     return FlatButton(
