@@ -1,16 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:login/welcome.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 class Login extends StatefulWidget {
-  
   @override
   _LoginState createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
-
-   @override
+  String _email, _password;
+  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  @override
   void initState() {
     super.initState();
   }
+
   final firmname = Padding(
     padding: EdgeInsets.only(top: 100.0, left: 70.0),
     child: new Text("TECHSHIKSHA",
@@ -33,73 +37,85 @@ class _LoginState extends State<Login> {
     ),
   );
 
-
-
-  final password = TextField(
-    autofocus: false,
-    // cursorColor: Color(0xFF606687),
-    // initialValue: 'some password',
-    obscureText: true,
-    decoration: InputDecoration(
-      prefixIcon: Icon(
-        Icons.lock,
-        color: Color(0xFF606687),
+  Widget func() {
+    return Form(
+      key: _formkey,
+      child: Column(
+        children: <Widget>[
+          SizedBox(height: 8.0),
+          TextFormField(
+              validator: (input) {
+                if (input.length < 8)
+                  return "Make sure your password consists of atleast 8 letters";
+              },
+              autofocus: false,
+              onSaved: (input) {
+                _email = input;
+              },
+              decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.person_outline,
+                  color: Color(0xFF606687),
+                ),
+                hintText: 'Email',
+                hintStyle: TextStyle(fontSize: 20.0, color: Color(0xFF606687)),
+                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide:
+                      const BorderSide(color: Color(0xFF606687), width: 2.0),
+                ),
+              )),
+          SizedBox(height: 8.0),
+          TextFormField(
+              validator: (input) {
+                if (input.length < 8)
+                  return "Make sure your password consists of atleast 8 letters";
+              },
+              autofocus: false,
+              obscureText: true,
+              onSaved: (input) {
+                _password = input;
+              },
+              decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.person_outline,
+                  color: Color(0xFF606687),
+                ),
+                hintText: 'Password',
+                hintStyle: TextStyle(fontSize: 20.0, color: Color(0xFF606687)),
+                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide:
+                      const BorderSide(color: Color(0xFF606687), width: 2.0),
+                ),
+              )),
+          SizedBox(height: 8.0),
+        ],
       ),
-      // icon:Icon(Icons.verified_user),
-      hintText: 'Password',
-      hintStyle: TextStyle(fontSize: 20.0, color: Color(0xFF606687)),
-      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-      // border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-      enabledBorder: const OutlineInputBorder(
-        borderSide: const BorderSide(color: Color(0xFF606687), width: 2.0),
-      ),
-    ),
-  );
-
- 
-  final username = TextFormField(
-    autofocus: false,
-    // initialValue: 'some password',
-    // obscureText: true,
-    decoration: InputDecoration(
-      prefixIcon: Icon(
-        Icons.person_outline,
-        color: Color(0xFF606687),
-      ),
-      // icon:Icon(Icons.verified_user),
-      hintText: 'enrollment no.',
-      hintStyle: TextStyle(fontSize: 20.0, color: Color(0xFF606687)),
-      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-      enabledBorder: const OutlineInputBorder(
-        borderSide: const BorderSide(color: Color(0xFF606687), width: 2.0),
-        // borderRadius: const BorderRadius.circular(5.0)
-        // borderRadius: BorderRadius.circular(10.0)
-      ),
-      // border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-    ),
-  );
-  final loginButton = Padding(
-    padding: EdgeInsets.symmetric(vertical: 16.0),
-    child: RaisedButton(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-      ),
-      onPressed: () {
-        // Navigator.of(context).pushNamed('/signup');
-      },
-      padding: EdgeInsets.all(12),
-      color: Colors.green,
-      child: Text('Log In', style: TextStyle(color: Colors.white)),
-    ),
-  );
-
-
-  Widget ctext(){
-    return FlatButton(
-      child: new Text("Wants to be member!"),
-       onPressed: () {
-       Navigator.pushNamed(context, '/signup');}
     );
+  }
+
+  Widget loginButton() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 16.0),
+      child: RaisedButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        onPressed: signin,
+        padding: EdgeInsets.all(12),
+        color: Colors.green,
+        child: Text('Sign In', style: TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
+  Widget ctext() {
+    return FlatButton(
+        child: new Text("Wants to be member!"),
+        onPressed: () {
+          Navigator.pushNamed(context, '/signup');
+        });
   }
 
 //  final ctext= Padding(
@@ -109,10 +125,48 @@ class _LoginState extends State<Login> {
 //        child: new Text("Wants to be member!"),
 //        onPressed: () {
 //        Navigator.pushNamed(context, '/signup');
-  
+
 //        },
 //      ),
 //    );
+  Future<void> signin() async {
+    final formState = _formkey.currentState;
+     
+    if (formState.validate()) {
+      // Navigator.of(context).pushNamed("/welcome");
+      formState.save();
+      try {
+        FirebaseUser user = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(email: _email, password: _password);
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => Welcome(user: user)));
+      } catch (e) {
+    //     Fluttertoast.showToast(
+    //     msg: "This is Center Short Toast",
+    //     toastLength: Toast.LENGTH_SHORT,
+    //     gravity: ToastGravity.CENTER,
+    //     timeInSecForIos: 1,
+    //     backgroundColor: Colors.red,
+    //     textColor: Colors.white,
+    //     fontSize: 16.0
+    // );
+        // Navigator.pushNamed(context, '/signup');
+        print(e); 
+        // print("error");
+        setState(() {
+        Text("Details are not Valid",style: TextStyle(color: Colors.white,fontSize: 30.0),);  
+        });
+        
+        // print(e.details);
+        // print(e.code);
+        // _showToast(context);
+      }
+      
+    }
+  }
+
+ 
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -129,23 +183,15 @@ class _LoginState extends State<Login> {
         children: <Widget>[
           firmname,
           logo,
-          SizedBox(height: 24.0),
-          username,
-          SizedBox(height: 8.0),
-          // email,
-          // SizedBox(height: 8.0),
-          password,
-          SizedBox(height: 8.0),
-          // confirmpassword,
-          // SizedBox(height: 8.0),
-
-          loginButton,
+          func(),
+          loginButton(),
           ctext(),
           // forgotLabel,
           // ankit
         ],
       ),
       backgroundColor: Color(0xFF292F47),
+      //  Color(0xFF292F47),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login/login.dart';
+import 'package:login/splash.dart';
 import 'signup.dart';
 import 'package:login/welcome.dart';
 void main() {
@@ -13,15 +14,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "Login Page",
       debugShowCheckedModeBanner: false,
-      home: Login(),
+      home: Splashscreen(),
       theme: new ThemeData(
           primaryTextTheme: Typography(platform: TargetPlatform.android).white,
           textTheme: Typography(platform: TargetPlatform.android).white,
-          primaryColor: Color(0xFF606687)),
+          // primaryColor: Color(0xFF606687)
+          ),
       // Signup.tag: (context) => Signup(),
-  initialRoute: '.',
+  initialRoute: '..',
       routes: {
         '.': (context) => Login(),
+        '..':(context) => Splashscreen(),
         '/signup' :(context) => Signup(),
         '/welcome' :(context) => Welcome()
               }, 
